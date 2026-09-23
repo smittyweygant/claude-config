@@ -8,5 +8,17 @@
       "WebSearch",
       "WebFetch"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_CONFIG_DIR:-$HOME/.claude-personal}/hooks/check-config-sync.sh\""
+          }
+        ]
+      }
+    ]
   }
 }
