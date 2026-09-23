@@ -11,7 +11,7 @@ personal instructions, hooks, and skills that apply across machines.
 | `CLAUDE.work.md` | appended after `CLAUDE.md`, work profile only | Delta on top of the shared rules for things that are genuinely work-specific |
 | `settings.json` | deep-merged into `$CLAUDE_CONFIG_DIR/settings.json` | Shared permissions/hooks; repo keys win, local-only keys are preserved |
 | `settings.work.json` | merged on top, work profile only | Work-specific permissions/MCP servers — not yet populated |
-| `hooks/` | `$CLAUDE_CONFIG_DIR/hooks/` | Lifecycle scripts — empty so far |
+| `hooks/` | `$CLAUDE_CONFIG_DIR/hooks/` | Lifecycle scripts — `check-config-sync.sh` (SessionStart auto-pull + reinstall) |
 | `skills/` | `$CLAUDE_CONFIG_DIR/skills/` | Slash-command skills — empty so far |
 | `hooks-work/` | `$CLAUDE_CONFIG_DIR/hooks/`, work profile only | `pre-akka-push.sh` — enforces the push-review gate below |
 | `skills-work/` | `$CLAUDE_CONFIG_DIR/skills/`, work profile only | `akka-pr-review` — independent pre-push review |
