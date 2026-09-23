@@ -71,7 +71,12 @@ them — memory can be stale.
 
 ## Obsidian Vault — Second Brain
 
-Canonical note store: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Smitty's Vault/`.
+<!-- Intentionally a short pointer, not the policy itself — full structure,
+     frontmatter, and the complete write-autonomy tiers live in the vault's
+     own CLAUDE.md and are version-controlled in the obsidian-agent repo.
+     Don't expand this section; edit the vault's CLAUDE.md instead. -->
+
+Canonical note store: `~/Obsidian/Smitty's Vault/`.
 This applies in every project, not just when a session happens to be working
 inside a repo that mentions it.
 

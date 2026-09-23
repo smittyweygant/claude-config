@@ -6,7 +6,15 @@
       "Write",
       "Bash",
       "WebSearch",
-      "WebFetch"
+      "WebFetch",
+      "Write(//Users/smittyweygant/Obsidian/Smitty's Vault/Inbox.md)",
+      "Edit(//Users/smittyweygant/Obsidian/Smitty's Vault/Inbox.md)",
+      "Write(//Users/smittyweygant/Obsidian/Smitty's Vault/Daily/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md)",
+      "Edit(//Users/smittyweygant/Obsidian/Smitty's Vault/Daily/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md)"
+    ],
+    "deny": [
+      "Write(//Users/smittyweygant/Obsidian/Smitty's Vault/.obsidian/**)",
+      "Edit(//Users/smittyweygant/Obsidian/Smitty's Vault/.obsidian/**)"
     ]
   },
   "hooks": {
