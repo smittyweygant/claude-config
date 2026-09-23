@@ -63,6 +63,25 @@ else
     echo "= no skills yet"
 fi
 
+# ── Work-only hooks/skills (profile=work only) ───────────────────────────────
+if [ "$PROFILE" = "work" ]; then
+    if compgen -G "$REPO_DIR/hooks-work/*.sh" > /dev/null; then
+        cp "$REPO_DIR/hooks-work/"*.sh "$CLAUDE_DIR/hooks/"
+        chmod +x "$CLAUDE_DIR/hooks/"*.sh
+        echo "✓ hooks-work/*.sh → $CLAUDE_DIR/hooks/ (executable)"
+    fi
+
+    shopt -s nullglob
+    work_skill_dirs=("$REPO_DIR"/skills-work/*/)
+    shopt -u nullglob
+    for skill_dir in "${work_skill_dirs[@]}"; do
+        skill_name=$(basename "$skill_dir")
+        mkdir -p "$CLAUDE_DIR/skills/$skill_name"
+        cp -r "$skill_dir"* "$CLAUDE_DIR/skills/$skill_name/"
+        echo "✓ skills-work/$skill_name/ → $CLAUDE_DIR/skills/$skill_name/"
+    done
+fi
+
 # ── settings.json (deep merge: repo wins on tracked keys) ───────────────────
 # On the work profile, settings.work.json (if present) is merged in as a
 # second pass on top of the shared settings.json — same base+overlay split
@@ -164,6 +183,22 @@ with open(existing_path, 'w') as f:
     f.write("\n")
 print("  + settings.work.json overlay merged")
 PYEOF
+fi
+
+# ── akka-mcp-gateway (company MCP gateway, work profile only) ───────────────
+# Registered at user scope. Authentication is per-machine and interactive —
+# run /mcp in Claude Code and sign in through Okta. No credential belongs here.
+if [ "$PROFILE" = "work" ]; then
+    GATEWAY_NAME="akka-mcp-gateway"
+    GATEWAY_URL="https://mcp.akka.services/mcp"
+    if ! command -v claude >/dev/null 2>&1; then
+        echo "⚠ claude not found on PATH — skipping $GATEWAY_NAME registration"
+    elif CLAUDE_CONFIG_DIR="$CLAUDE_DIR" claude mcp get "$GATEWAY_NAME" 2>/dev/null | grep -q "User config"; then
+        echo "✓ $GATEWAY_NAME already registered at user scope"
+    else
+        CLAUDE_CONFIG_DIR="$CLAUDE_DIR" claude mcp add --transport http --scope user "$GATEWAY_NAME" "$GATEWAY_URL" 2>&1 | sed 's/^/  /'
+        echo "✓ $GATEWAY_NAME registered — run /mcp to authenticate"
+    fi
 fi
 
 echo ""

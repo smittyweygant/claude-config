@@ -13,8 +13,11 @@ personal instructions, hooks, and skills that apply across machines.
 | `settings.work.json` | merged on top, work profile only | Work-specific permissions/MCP servers — not yet populated |
 | `hooks/` | `$CLAUDE_CONFIG_DIR/hooks/` | Lifecycle scripts — empty so far |
 | `skills/` | `$CLAUDE_CONFIG_DIR/skills/` | Slash-command skills — empty so far |
+| `hooks-work/` | `$CLAUDE_CONFIG_DIR/hooks/`, work profile only | `pre-akka-push.sh` — enforces the push-review gate below |
+| `skills-work/` | `$CLAUDE_CONFIG_DIR/skills/`, work profile only | `akka-pr-review` — independent pre-push review |
 | `templates/` | copy into a project root as needed | Per-project scaffolding |
 | `codex/` | `~/.codex` and project roots | Portable Codex config — not yet built |
+| `akka-mcp-gateway` (registered by `install.sh`, work profile only) | user-scope MCP registration | Company gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Calendar, Drive, HubSpot, Okta, Groundcover. Auth is per-machine: run `/mcp` and sign in via Okta. |
 
 One repo, two install targets: `~/.claude-personal` and `~/.claude-work` (kept
 isolated for auth, usage tracking, and session history by the

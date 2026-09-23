@@ -68,3 +68,37 @@ them — memory can be stale.
 - Never write code with SQL injection, XSS, command injection, or path traversal.
 - Only validate at system boundaries — trust internal code and framework
   guarantees.
+
+## Obsidian Vault — Second Brain
+
+Canonical note store: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Smitty's Vault/`.
+This applies in every project, not just when a session happens to be working
+inside a repo that mentions it.
+
+When asked to jot down a note, capture a thought, or set a reminder, write it
+there rather than losing it in the conversation:
+
+- **Reminders / to-dos**: append a checkbox line under the daily note's
+  relevant section, `Smitty's Vault/Daily/YYYY-MM-DD.md` (build from
+  `Reference/Templates/Daily Note Template.md` if today's doesn't exist yet).
+- **Everything else** (ideas, things to look into, loose notes): append to
+  `Smitty's Vault/Inbox.md`.
+
+Both are pre-approved for autonomous writes — no need to ask (see the vault's
+own `CLAUDE.md` for the full write-autonomy tiers). Don't edit any *other*
+file in the vault from outside a session actually working in the vault
+directory; flag it to Smitty instead of writing it yourself. For anything
+beyond quick capture — processing the inbox, editing existing notes, vault
+structure questions — that's the `vault-triage` skill, scoped to sessions
+working in that directory.
+
+## Deliverables: Vault First, Artifacts When Interactive
+
+For durable text output (a report, a summary, an analysis, project tracking),
+default to writing it into the vault (a new note, or an entry in the relevant
+project/daily note) rather than a claude.ai Artifact or a throwaway local
+file — it's the second brain, already synced across devices, already linked
+to related notes. This is a default, not a ban: the Artifact tool stays
+available and is the right call for anything genuinely interactive or visual
+that markdown can't represent — a dashboard, a live chart, a tool with state.
+When unsure which a request wants, ask rather than guessing.
