@@ -192,5 +192,26 @@ if [ "$PROFILE" = "work" ]; then
     fi
 fi
 
+# ── Legacy ~/.claude → personal (defense against accidental bare `claude`) ──
+# Claude Code falls back to ~/.claude whenever $CLAUDE_CONFIG_DIR is unset —
+# a bare `claude` in a fresh shell, an IDE integration, a background job, or
+# anything else that doesn't go through claude-personal/claude-work. Making
+# that fallback literally BE the personal profile (auth included, not just
+# config) means such a bypass can never silently authenticate as work.
+LEGACY_DIR="$HOME/.claude"
+PERSONAL_DIR="$HOME/.claude-personal"
+if [ -L "$LEGACY_DIR" ]; then
+    if [ "$(readlink "$LEGACY_DIR")" = "$PERSONAL_DIR" ]; then
+        echo "✓ $LEGACY_DIR → $PERSONAL_DIR"
+    else
+        echo "⚠ $LEGACY_DIR is a symlink to something else — leaving it alone."
+    fi
+elif [ -e "$LEGACY_DIR" ]; then
+    echo "⚠ $LEGACY_DIR exists and is a real directory — leaving it alone. Back it up, then 'ln -s $PERSONAL_DIR $LEGACY_DIR' manually to close the fallback gap."
+elif [ -d "$PERSONAL_DIR" ]; then
+    ln -s "$PERSONAL_DIR" "$LEGACY_DIR"
+    echo "✓ $LEGACY_DIR → $PERSONAL_DIR (new)"
+fi
+
 echo ""
 echo "Done! Restart Claude Code for changes to take effect."
