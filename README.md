@@ -7,38 +7,45 @@ personal instructions, hooks, and skills that apply across machines.
 
 | File/Dir | Installs to | Purpose |
 |----------|-------------|---------|
-| `CLAUDE.md` | `$CLAUDE_CONFIG_DIR/CLAUDE.md` | Shared global instructions — installed to every profile |
-| `CLAUDE.work.md` | appended after `CLAUDE.md`, work profile only | Delta on top of the shared rules for things that are genuinely work-specific |
-| `settings.json` | deep-merged into `$CLAUDE_CONFIG_DIR/settings.json` | Shared permissions/hooks; repo keys win, local-only keys are preserved |
-| `settings.work.json` | merged on top, work profile only | Work-specific permissions/MCP servers — not yet populated |
-| `hooks/` | `$CLAUDE_CONFIG_DIR/hooks/` | Lifecycle scripts — `check-config-sync.sh` (SessionStart auto-pull + reinstall) |
-| `skills/` | `$CLAUDE_CONFIG_DIR/skills/` | Slash-command skills — empty so far |
-| `hooks-work/` | `$CLAUDE_CONFIG_DIR/hooks/`, work profile only | `pre-akka-push.sh` — enforces the push-review gate below |
-| `skills-work/` | `$CLAUDE_CONFIG_DIR/skills/`, work profile only | `akka-pr-review` — independent pre-push review |
+| `CLAUDE.md` | `$CLAUDE_SHARED_DIR/CLAUDE.md` | Global instructions, shared by every profile. Work-specific guidance (the "Work-Specific Additions" section) is self-gating on repo content — e.g. an akka-org remote — not on which profile is running |
+| `settings.json` | deep-merged into `$CLAUDE_SHARED_DIR/settings.json` | Shared permissions/hooks; repo keys win, local-only keys are preserved |
+| `hooks/` | `$CLAUDE_SHARED_DIR/hooks/` | Lifecycle scripts — `check-config-sync.sh` (SessionStart auto-pull + reinstall), `pre-akka-push.sh` (push-review gate, self-gates on akka-org remote) |
+| `skills/` | `$CLAUDE_SHARED_DIR/skills/` | Slash-command skills — `akka-pr-review` (independent pre-push review, self-gates on akka-org remote) |
 | `templates/` | copy into a project root as needed | Per-project scaffolding |
 | `codex/` | `~/.codex` and project roots | Portable Codex config — not yet built |
-| `akka-mcp-gateway` (registered by `install.sh`, work profile only) | user-scope MCP registration | Company gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Calendar, Drive, HubSpot, Okta, Groundcover. Auth is per-machine: run `/mcp` and sign in via Okta. |
+| `akka-mcp-gateway` (registered by `install.sh`, work profile only) | user-scope MCP registration in `$CLAUDE_CONFIG_DIR/.claude.json`, per profile | Company gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Calendar, Drive, HubSpot, Okta, Groundcover. Auth is per-machine: run `/mcp` and sign in via Okta. |
 
-One repo, two install targets: `~/.claude-personal` and `~/.claude-work` (kept
-isolated for auth, usage tracking, and session history by the
-`claude-personal`/`claude-work` shell functions in
-[dotfiles](https://github.com/smittyweygant/dotfiles)) share the same base
-rules in `CLAUDE.md`, so discipline doesn't drift between the two. `install.sh`
-infers the profile from the target directory name (or `$CLAUDE_PROFILE`) and
-layers `CLAUDE.work.md`/`settings.work.json` on top only for the work profile.
-Those overlay files start empty and get filled in as work-specific needs
-(org MCP servers, a push-review gate, etc.) come up — see `CLAUDE.work.md`.
+One repo, two profile directories — `~/.claude-personal` and `~/.claude-work`
+— but a single shared config/history tree at `~/.claude-shared` (default;
+override with `$CLAUDE_SHARED_DIR`). `install.sh` populates the shared tree
+and symlinks `CLAUDE.md`, `settings.json`, `hooks/`, `skills/`, and
+`projects/` (session history) from each profile directory into it, so both
+profiles see identical config and identical thread history. Only the two
+things Claude Code itself keys to `$CLAUDE_CONFIG_DIR` — auth credentials and
+the `akka-mcp-gateway` MCP registration, both living in that directory's own
+`.claude.json` — stay separate per profile. That split is the whole point:
+`claude-personal`/`claude-work` (the shell functions in
+[dotfiles](https://github.com/smittyweygant/dotfiles)) toggle which Anthropic
+account — and which plan's quota — a session draws against, independent of
+which project or content you're working on.
+
+Work-specific rules used to live in overlay files (`CLAUDE.work.md`,
+`settings.work.json`, `hooks-work/`, `skills-work/`) installed only into the
+work profile. Those are gone now that history isn't split by profile either —
+each piece of work-only content gates itself on the repo it's running in
+(an akka-org git remote) rather than on which directory installed it.
 
 ## Install
 
 ```bash
 git clone https://github.com/smittyweygant/claude-config
 cd claude-config
-bash install.sh                              # → ~/.claude-personal
-CLAUDE_CONFIG_DIR=~/.claude-work bash install.sh   # → ~/.claude-work, with the work overlay
+bash install.sh                                    # → ~/.claude-personal
+CLAUDE_CONFIG_DIR=~/.claude-work bash install.sh    # → ~/.claude-work
 ```
 
-Restart Claude Code after installing. Safe to re-run.
+Both commands populate the same `~/.claude-shared`. Restart Claude Code after
+installing. Safe to re-run.
 
 Also wired into a fresh-machine bootstrap via
 [dotfiles](https://github.com/smittyweygant/dotfiles) — see that repo for the

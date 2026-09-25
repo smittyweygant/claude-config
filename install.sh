@@ -2,20 +2,33 @@
 # install.sh — Install Smitty's Claude Code user configuration
 # Run from the repo root: bash install.sh
 #
-# Targets $CLAUDE_CONFIG_DIR if set, otherwise ~/.claude-personal (this
-# repo's config is personal-profile content; a work profile, if ever needed,
-# is a separate — likely private — repo, same split as the dotfiles repo
-# uses for public vs. private tooling).
+# Targets $CLAUDE_CONFIG_DIR if set, otherwise ~/.claude-personal.
 #
-# Safe to re-run: settings.json is deep-merged (repo wins on tracked keys,
-# local-only keys are preserved); other files are overwritten.
+# CLAUDE.md, settings.json, hooks/, and skills/ are personal and work content
+# now shared verbatim (work-only guidance is self-gating on repo content, not
+# on which profile installed it — see hooks/README.md). They live in
+# $CLAUDE_SHARED_DIR (default ~/.claude-shared) and each profile directory
+# gets a symlink to them, so both profiles see identical config and session
+# history. Only auth (credentials, keyed to $CLAUDE_CONFIG_DIR by Claude Code
+# itself) and the akka-mcp-gateway MCP registration (which lives in
+# $CLAUDE_CONFIG_DIR/.claude.json, also not shared) stay per-directory — that
+# split is what lets `claude-personal`/`claude-work` toggle which account
+# you're authenticated as without touching config or history.
+#
+# Safe to re-run. settings.json is deep-merged into the shared copy (repo
+# wins on tracked keys, local-only keys preserved); CLAUDE.md/hooks/skills
+# are overwritten in the shared copy. A profile dir whose target already
+# exists as a REAL file/dir (not a symlink) is left untouched with a warning
+# — that's pre-migration live data and this script won't silently absorb it.
 
 set -e
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude-personal}"
+SHARED_DIR="${CLAUDE_SHARED_DIR:-$HOME/.claude-shared}"
 
 # Profile is inferred from the target dir name (e.g. ~/.claude-work) unless
-# CLAUDE_PROFILE is set explicitly. Only "work" triggers the overlay below.
+# CLAUDE_PROFILE is set explicitly. Only used below to decide whether to
+# register the company MCP gateway — shared content no longer branches on it.
 PROFILE="${CLAUDE_PROFILE:-}"
 if [ -z "$PROFILE" ]; then
     case "$(basename "$CLAUDE_DIR")" in
@@ -24,26 +37,25 @@ if [ -z "$PROFILE" ]; then
     esac
 fi
 
-echo "Installing Claude user config from $REPO_DIR into $CLAUDE_DIR (profile: $PROFILE)..."
+echo "Installing Claude user config from $REPO_DIR"
+echo "  shared:  $SHARED_DIR"
+echo "  profile: $CLAUDE_DIR (profile: $PROFILE)"
 echo ""
 
-mkdir -p "$CLAUDE_DIR/hooks"
-mkdir -p "$CLAUDE_DIR/skills"
+mkdir -p "$SHARED_DIR/hooks"
+mkdir -p "$SHARED_DIR/skills"
+mkdir -p "$SHARED_DIR/projects"
+mkdir -p "$CLAUDE_DIR"
 
-# ── CLAUDE.md (shared base + work overlay when profile=work) ────────────────
-if [ "$PROFILE" = "work" ] && [ -f "$REPO_DIR/CLAUDE.work.md" ]; then
-    cat "$REPO_DIR/CLAUDE.md" "$REPO_DIR/CLAUDE.work.md" > "$CLAUDE_DIR/CLAUDE.md"
-    echo "✓ CLAUDE.md + CLAUDE.work.md → $CLAUDE_DIR/CLAUDE.md"
-else
-    cp "$REPO_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-    echo "✓ CLAUDE.md → $CLAUDE_DIR/CLAUDE.md"
-fi
+# ── CLAUDE.md ─────────────────────────────────────────────────────────────
+cp "$REPO_DIR/CLAUDE.md" "$SHARED_DIR/CLAUDE.md"
+echo "✓ CLAUDE.md → $SHARED_DIR/CLAUDE.md"
 
 # ── Hook scripts ─────────────────────────────────────────────────────────────
 if compgen -G "$REPO_DIR/hooks/*.sh" > /dev/null; then
-    cp "$REPO_DIR/hooks/"*.sh "$CLAUDE_DIR/hooks/"
-    chmod +x "$CLAUDE_DIR/hooks/"*.sh
-    echo "✓ hooks/*.sh → $CLAUDE_DIR/hooks/ (executable)"
+    cp "$REPO_DIR/hooks/"*.sh "$SHARED_DIR/hooks/"
+    chmod +x "$SHARED_DIR/hooks/"*.sh
+    echo "✓ hooks/*.sh → $SHARED_DIR/hooks/ (executable)"
 else
     echo "= no hooks yet"
 fi
@@ -55,38 +67,16 @@ shopt -u nullglob
 if [ ${#skill_dirs[@]} -gt 0 ]; then
     for skill_dir in "${skill_dirs[@]}"; do
         skill_name=$(basename "$skill_dir")
-        mkdir -p "$CLAUDE_DIR/skills/$skill_name"
-        cp -r "$skill_dir"* "$CLAUDE_DIR/skills/$skill_name/"
-        echo "✓ skills/$skill_name/ → $CLAUDE_DIR/skills/$skill_name/"
+        mkdir -p "$SHARED_DIR/skills/$skill_name"
+        cp -r "$skill_dir"* "$SHARED_DIR/skills/$skill_name/"
+        echo "✓ skills/$skill_name/ → $SHARED_DIR/skills/$skill_name/"
     done
 else
     echo "= no skills yet"
 fi
 
-# ── Work-only hooks/skills (profile=work only) ───────────────────────────────
-if [ "$PROFILE" = "work" ]; then
-    if compgen -G "$REPO_DIR/hooks-work/*.sh" > /dev/null; then
-        cp "$REPO_DIR/hooks-work/"*.sh "$CLAUDE_DIR/hooks/"
-        chmod +x "$CLAUDE_DIR/hooks/"*.sh
-        echo "✓ hooks-work/*.sh → $CLAUDE_DIR/hooks/ (executable)"
-    fi
-
-    shopt -s nullglob
-    work_skill_dirs=("$REPO_DIR"/skills-work/*/)
-    shopt -u nullglob
-    for skill_dir in "${work_skill_dirs[@]}"; do
-        skill_name=$(basename "$skill_dir")
-        mkdir -p "$CLAUDE_DIR/skills/$skill_name"
-        cp -r "$skill_dir"* "$CLAUDE_DIR/skills/$skill_name/"
-        echo "✓ skills-work/$skill_name/ → $CLAUDE_DIR/skills/$skill_name/"
-    done
-fi
-
-# ── settings.json (deep merge: repo wins on tracked keys) ───────────────────
-# On the work profile, settings.work.json (if present) is merged in as a
-# second pass on top of the shared settings.json — same base+overlay split
-# as CLAUDE.md above.
-SETTINGS_PATH="$CLAUDE_DIR/settings.json"
+# ── settings.json (deep merge into the shared copy: repo wins on tracked keys) ──
+SETTINGS_PATH="$SHARED_DIR/settings.json"
 REPO_SETTINGS="$REPO_DIR/settings.json"
 
 if [ ! -f "$SETTINGS_PATH" ]; then
@@ -160,34 +150,35 @@ PYEOF
     echo "✓ settings.json deep-merge complete"
 fi
 
-if [ "$PROFILE" = "work" ] && [ -f "$REPO_DIR/settings.work.json" ]; then
-    python3 - "$SETTINGS_PATH" "$REPO_DIR/settings.work.json" <<'PYEOF'
-import sys, json
-existing_path, overlay_path = sys.argv[1], sys.argv[2]
-with open(existing_path) as f:
-    existing = json.load(f)
-with open(overlay_path) as f:
-    overlay = json.load(f)
+# ── Symlink the profile dir at $CLAUDE_DIR into the shared content ──────────
+# Only ever creates/repairs a symlink. A real (non-symlink) file or dir at
+# the target is left alone with a warning — that's either pre-migration live
+# data or something unexpected, and this script won't guess which.
+link() {
+    local target="$1" link_path="$2"
+    if [ -L "$link_path" ]; then
+        [ "$(readlink "$link_path")" = "$target" ] || { rm "$link_path"; ln -s "$target" "$link_path"; }
+        echo "✓ $link_path → $target"
+    elif [ -e "$link_path" ]; then
+        echo "⚠ $link_path exists and is not a symlink — leaving it alone. Migrate it into $SHARED_DIR manually, then re-run."
+    else
+        ln -s "$target" "$link_path"
+        echo "✓ $link_path → $target (new)"
+    fi
+}
 
-def deep_merge(local, upstream):
-    if isinstance(upstream, dict) and isinstance(local, dict):
-        result = dict(local)
-        for k, v in upstream.items():
-            result[k] = deep_merge(result[k], v) if k in result else v
-        return result
-    return upstream
-
-merged = deep_merge(existing, overlay)
-with open(existing_path, 'w') as f:
-    json.dump(merged, f, indent=2)
-    f.write("\n")
-print("  + settings.work.json overlay merged")
-PYEOF
-fi
+link "$SHARED_DIR/CLAUDE.md"    "$CLAUDE_DIR/CLAUDE.md"
+link "$SHARED_DIR/settings.json" "$CLAUDE_DIR/settings.json"
+link "$SHARED_DIR/hooks"        "$CLAUDE_DIR/hooks"
+link "$SHARED_DIR/skills"       "$CLAUDE_DIR/skills"
+link "$SHARED_DIR/projects"     "$CLAUDE_DIR/projects"
 
 # ── akka-mcp-gateway (company MCP gateway, work profile only) ───────────────
-# Registered at user scope. Authentication is per-machine and interactive —
-# run /mcp in Claude Code and sign in through Okta. No credential belongs here.
+# Registered at user scope in THIS profile's own (unshared) .claude.json —
+# authentication and MCP registration stay per-directory on purpose, so the
+# gateway is only available when authenticated as the work account.
+# Authentication is per-machine and interactive — run /mcp and sign in
+# through Okta. No credential belongs here.
 if [ "$PROFILE" = "work" ]; then
     GATEWAY_NAME="akka-mcp-gateway"
     GATEWAY_URL="https://mcp.akka.services/mcp"
