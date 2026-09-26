@@ -83,7 +83,8 @@ inside a repo that mentions it.
 When asked to jot down a note, capture a thought, or set a reminder, write it
 there rather than losing it in the conversation:
 
-- **Reminders / to-dos**: append a checkbox line under the daily note's
+- **Reminders / to-dos**: capture each new action once as a checkbox with a
+  creation date (`➕ YYYY-MM-DD`) under the daily note's
   relevant section, `Smitty's Vault/Daily/YYYY-MM-DD.md` (build from
   `Reference/Templates/Daily Note Template.md` if today's doesn't exist yet).
 - **Everything else** (ideas, things to look into, loose notes): append to
