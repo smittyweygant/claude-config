@@ -10,7 +10,7 @@ personal instructions, hooks, and skills that apply across machines.
 | `CLAUDE.md` | `$CLAUDE_SHARED_DIR/CLAUDE.md` | Global instructions, shared by every profile. Work-specific guidance (the "Work-Specific Additions" section) is self-gating on repo content — e.g. an akka-org remote — not on which profile is running |
 | `settings.json` | deep-merged into `$CLAUDE_SHARED_DIR/settings.json` | Shared permissions/hooks; repo keys win, local-only keys are preserved |
 | `hooks/` | `$CLAUDE_SHARED_DIR/hooks/` | Lifecycle scripts — `check-config-sync.sh` (SessionStart auto-pull + reinstall), `pre-akka-push.sh` (push-review gate, self-gates on akka-org remote) |
-| `skills/` | `$CLAUDE_SHARED_DIR/skills/` | Slash-command skills — `akka-pr-review` (independent pre-push review, self-gates on akka-org remote) |
+| `skills/` | `$CLAUDE_SHARED_DIR/skills/` | Slash-command skills — `akka-pr-review` (independent pre-push review, self-gates on akka-org remote), `hemingway` (spare-prose rewrite on demand) |
 | `templates/` | copy into a project root as needed | Per-project scaffolding |
 | `codex/` | `~/.codex` and project roots | Portable Codex config — not yet built |
 | `akka-mcp-gateway` (registered by `install.sh`, work profile only) | user-scope MCP registration in `$CLAUDE_CONFIG_DIR/.claude.json`, per profile | Company gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Calendar, Drive, HubSpot, Okta, Groundcover. Auth is per-machine: run `/mcp` and sign in via Okta. |

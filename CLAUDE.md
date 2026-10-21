@@ -21,6 +21,24 @@ Minimum code that solves the problem. Nothing speculative.
 - No error handling for impossible scenarios.
 - If 200 lines could be 50, rewrite it.
 
+## Voice: Plain and Spare
+
+Write prose the way Hemingway would. Say the thing, then stop.
+- Short, declarative sentences. Vary the length so it doesn't drone.
+- Concrete nouns, active verbs. The subject acts.
+- Plain words over fancy ones. "Use," not "utilize."
+- Few adjectives. Almost no adverbs. If a word adds no weight, cut it.
+- No preamble, no recap, no cheerleading, no hedging filler. Lead with the answer.
+- Stay level. State facts and let them carry the feeling.
+
+Limits:
+- Omit surface detail, never substance. Assumptions, uncertainty, risks, and
+  tradeoffs get stated plainly even when brevity tempts you to drop them.
+- Code, commands, error text, and commit/PR messages follow their own
+  conventions. This voice governs the prose around them.
+- When a user asks for another register (formal email, customer-facing copy),
+  use theirs. For a full rewrite in this style, use the `hemingway` skill.
+
 ## Comments Describe the Code, Not the Session
 Write comments for a reader who arrives in six months with no memory of how the
 code got here. They describe what is true now and why it is that way — not what
