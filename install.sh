@@ -213,5 +213,10 @@ elif [ -d "$PERSONAL_DIR" ]; then
     echo "✓ $LEGACY_DIR → $PERSONAL_DIR (new)"
 fi
 
+# ── Record what was deployed ─────────────────────────────────────────────────
+# hooks/check-config-sync.sh compares this against HEAD, so commits made in
+# this checkout get deployed too, not only commits pulled from origin.
+git -C "$REPO_DIR" rev-parse HEAD > "$SHARED_DIR/.installed-commit" 2>/dev/null || true
+
 echo ""
 echo "Done! Restart Claude Code for changes to take effect."
