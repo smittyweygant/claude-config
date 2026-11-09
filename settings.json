@@ -22,8 +22,19 @@
       "Bash(aws * --profile admin*)",
       "Bash(*AWS_PROFILE=default*)",
       "Bash(*AWS_PROFILE=admin*)",
+      "Bash(aws * --profile readonly*)",
+      "Bash(*AWS_PROFILE=readonly*)",
       "Bash(*.aws/login/cache*)",
-      "Bash(*.aws/cli/cache*)"
+      "Bash(*.aws/cli/cache*)",
+      "Read(//Users/smittyweygant/.aws/sso/cache/**)",
+      "Bash(aws sso login*)",
+      "Bash(aws sso get-role-credentials*)",
+      "Bash(*.aws/sso/cache*)",
+      "Bash(aws-elevate)",
+      "Bash(aws-elevate *)",
+      "Bash(~/.local/bin/aws-elevate*)",
+      "Bash(claude-elevate)",
+      "Bash(claude-elevate *)"
     ]
   },
   "hooks": {
