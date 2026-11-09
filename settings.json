@@ -13,7 +13,17 @@
       "Edit(//Users/smittyweygant/Obsidian/Smitty's Vault/Daily/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md)"
     ],
     "deny": [
-      "Edit(//Users/smittyweygant/Obsidian/Smitty's Vault/.obsidian/**)"
+      "Edit(//Users/smittyweygant/Obsidian/Smitty's Vault/.obsidian/**)",
+      "Read(//Users/smittyweygant/.aws/login/**)",
+      "Read(//Users/smittyweygant/.aws/cli/cache/**)",
+      "Bash(aws login*)",
+      "Bash(aws configure export-credentials*)",
+      "Bash(aws * --profile default*)",
+      "Bash(aws * --profile admin*)",
+      "Bash(*AWS_PROFILE=default*)",
+      "Bash(*AWS_PROFILE=admin*)",
+      "Bash(*.aws/login/cache*)",
+      "Bash(*.aws/cli/cache*)"
     ]
   },
   "hooks": {
