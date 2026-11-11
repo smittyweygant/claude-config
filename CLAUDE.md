@@ -102,6 +102,12 @@ below.
   `templates/project-workflow/` from claude-config (issue forms, PR template,
   labels, workflow doc, project `CLAUDE.md`) instead of inventing a variant.
 
+## Chezmoi Dotfiles Repos
+In a chezmoi source repo, read its `CLAUDE.md` before editing any managed file.
+Edit the source, not the live file, and check `chezmoi diff` before and after.
+Keep personal data (hosts, key names, IPs, account IDs) out of public repos;
+it belongs in the gitignored `.local` files the repo's `CLAUDE.md` names.
+
 ## Subagents
 - Use the Explore subagent for open-ended codebase questions.
 - Use parallel Agent tool calls for independent research tasks.
