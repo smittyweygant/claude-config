@@ -1,0 +1,26 @@
+name: Task
+description: One piece of a story
+labels: ["type:task"]
+body:
+  - type: input
+    id: parent
+    attributes:
+      label: Part of
+      description: The story's issue number. Also add this issue as a sub-issue of the story.
+      placeholder: "#3"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      value: |
+        - [ ]
+    validations:
+      required: true

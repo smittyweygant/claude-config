@@ -1,0 +1,37 @@
+name: Bug
+description: Something is broken or wrong
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, with exact numbers, dates or error text.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Queries, screenshots, log lines, affected records.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What this gets wrong, and how much.
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      value: |
+        - [ ] The cause is found and written up here.
+        - [ ] A test reproduces it, then passes with the fix.
+        - [ ] Verified in the running system.
+    validations:
+      required: true

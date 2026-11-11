@@ -77,6 +77,31 @@ them — memory can be stale.
 - Stage specific files by name, never `git add -A` blindly.
 - Check `git status` before any commit to confirm what will be staged.
 
+## Project Workflow: Issues, PRs, Deploy
+
+Applies to Smitty's own repos (`github.com/smittyweygant/*`) and any repo with no
+workflow of its own. A project's `CLAUDE.md` and docs win on specifics. Repos
+in the `akka` org follow the company's conventions plus the pre-push review
+below.
+
+- **Start from an issue.** Run `gh issue list` at session start. If the work has
+  no issue, create one first: what, why, and checkable "Done when" boxes.
+- **Branch per issue**, named `<issue#>-<slug>`, off an up-to-date default branch.
+- **Never push to the default branch.** Open a PR with `Closes #N`: what and
+  why, how it was verified, deploy notes. Smitty merges (squash). Run
+  `/code-review` before asking for review. One issue per PR.
+- **Status lives on the issue and the board,** not in docs or journals.
+  Findings go in issue comments. Design goes in a plan doc linked from the issue.
+- **Bugs start with a test** that reproduces them.
+- **A merge may deploy.** If a deploy workflow runs on the default branch, a
+  merge is a release: watch the run (`gh run watch --exit-status`), check the
+  live system, then report. Never deploy around CI. Done means verified live.
+- **Changing production data:** a named dump first, a dry run that shows the
+  diff, apply only on Smitty's go-ahead, and a record of what was replaced.
+- **New repo, or a repo missing the scaffolding:** adopt
+  `templates/project-workflow/` from claude-config (issue forms, PR template,
+  labels, workflow doc, project `CLAUDE.md`) instead of inventing a variant.
+
 ## Subagents
 - Use the Explore subagent for open-ended codebase questions.
 - Use parallel Agent tool calls for independent research tasks.
