@@ -1,0 +1,25 @@
+name: Story
+description: A feature, from the user's point of view
+labels: ["type:story"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: Story
+      value: "As a ..., I want ..., so that ..."
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: Checkable statements that are true when the story is done.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: input
+    id: plan
+    attributes:
+      label: Plan
+      description: Link to the design doc in docs/plans/, if there is one.
