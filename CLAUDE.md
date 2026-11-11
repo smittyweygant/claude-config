@@ -59,6 +59,34 @@ Define success criteria. Loop until verified.
 - "Fix the bug" → write a test that reproduces it, then make it pass.
 - For multi-step tasks, state a brief plan: `1. step → verify: check` per line.
 
+## Token Estimates: Before and After
+
+Estimate before you start. Measure after. Record the gap.
+
+Applies to every issue or task, in any project.
+
+- **Baseline first.** Before anything else, run
+  `python3 -I ~/development/claude-config/scripts/usage.py <session>.jsonl` on the
+  current session transcript (`~/.claude-personal/projects/<project-dir>/<session-id>.jsonl`;
+  the work profile's root may differ). Note calls and all_total.
+- **Estimate before work.** State processed tokens (all_total), fresh tokens and
+  output, each with a range. all_total is roughly calls x average context. Average
+  context starts at the size of the system prompt and tools (55k in the finances
+  project) and grows about 1.2k per call. Budget calls by decisions, not lines of
+  code: about 6 per PR (branch, commit, push, create, review, comment). Widen the
+  range for an unknown cause. Budget design work at 1.6x the first pass for the
+  review round. A `/code-review low` subagent costs about 41k, and it is not in the
+  main transcript. Take its figure from the task notification.
+- **Post the estimate on the issue before branching.** If the work has no issue,
+  state it in the session instead.
+- **After the PR, measure.** Run `usage.py` again and subtract the baseline. Add
+  subagent tokens. Comment the estimate and the actual on the issue: calls,
+  all_total, fresh, output, and one line on why they differed.
+- **Log it.** Add a dated entry to the vault note
+  `Projects/Coding Agent Orchestration/Agent Work Estimation.md`. It is the one note
+  outside the quick-capture rule that Claude writes to from any project.
+- Do not skip the up-front estimate because the task looks small.
+
 ## Grep First — Never Read Large Files Whole
 Before reading any source file, estimate its size. If a file is likely > 200
 lines: grep for the specific symbol needed, then read with offset+limit around
@@ -140,7 +168,10 @@ there rather than losing it in the conversation:
   `Smitty's Vault/Inbox.md`.
 
 Both are pre-approved for autonomous writes — no need to ask (see the vault's
-own `CLAUDE.md` for the full write-autonomy tiers). Don't edit any *other*
+own `CLAUDE.md` for the full write-autonomy tiers). A third target is
+pre-approved too: token-estimate log entries, appended to
+`Smitty's Vault/Projects/Coding Agent Orchestration/Agent Work Estimation.md`
+(see "Token Estimates: Before and After"). Don't edit any *other*
 file in the vault from outside a session actually working in the vault
 directory; flag it to Smitty instead of writing it yourself. For anything
 beyond quick capture — processing the inbox, editing existing notes, vault
@@ -156,7 +187,8 @@ file — it's the second brain, already synced across devices, already linked
 to related notes. This is a default, not a ban: the Artifact tool stays
 available and is the right call for anything genuinely interactive or visual
 that markdown can't represent — a dashboard, a live chart, a tool with state.
-When unsure which a request wants, ask rather than guessing.
+When unsure which a request wants, ask rather than guessing. Token-estimate
+entries go to `Projects/Coding Agent Orchestration/Agent Work Estimation.md`.
 
 ## Work-Specific Additions (Akka)
 
