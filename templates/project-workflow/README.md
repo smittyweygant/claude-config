@@ -21,7 +21,7 @@ mkdir -p "$P/.github" "$P/docs/process"
 cp -R "$T/.github/." "$P/.github/"
 cp "$T/docs/process/workflow.md" "$P/docs/process/"
 [ -e "$P/CLAUDE.md" ] || cp "$T/CLAUDE.md" "$P/CLAUDE.md"
-(cd "$P" && bash "$T/labels.sh")
+(cd "$P" && bash "$T/labels.sh" && gh repo edit --delete-branch-on-merge)
 ```
 
 Then, in the repo's own issue and PR:
