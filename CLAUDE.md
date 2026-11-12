@@ -118,6 +118,10 @@ below.
 - **Never push to the default branch.** Open a PR with `Closes #N`: what and
   why, how it was verified, deploy notes. Smitty merges (squash). Run
   `/code-review` before asking for review. One issue per PR.
+- **After a merge, clean up.** Run `git checkout <default> && git pull --prune`,
+  then `git branch -d <branch>`. Every repo keeps "Automatically delete head
+  branches" on (`gh repo edit --delete-branch-on-merge`). That removes the remote
+  branch only; GitHub never touches local ones.
 - **Status lives on the issue and the board,** not in docs or journals.
   Findings go in issue comments. Design goes in a plan doc linked from the issue.
 - **Bugs start with a test** that reproduces them.
