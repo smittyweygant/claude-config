@@ -119,9 +119,13 @@ below.
   why, how it was verified, deploy notes. Smitty merges (squash). Run
   `/code-review` before asking for review. One issue per PR.
 - **After a merge, clean up.** Run `git checkout <default> && git pull --prune`,
-  then `git branch -d <branch>`. Every repo keeps "Automatically delete head
+  then delete the local branch. Every repo keeps "Automatically delete head
   branches" on (`gh repo edit --delete-branch-on-merge`). That removes the remote
-  branch only; GitHub never touches local ones.
+  branch only; GitHub never touches local ones. A squash merge leaves the
+  branch's commits out of the default branch's history, so `git branch -d`
+  always refuses. Confirm the merge first, then force the delete:
+  `gh pr view <N> --json state -q .state` must print `MERGED`, then
+  `git branch -D <branch>`. Never `-D` a branch whose PR is open or unmerged.
 - **Status lives on the issue and the board,** not in docs or journals.
   Findings go in issue comments. Design goes in a plan doc linked from the issue.
 - **Bugs start with a test** that reproduces them.
