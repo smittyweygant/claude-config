@@ -13,8 +13,8 @@
 #   4. none     unlinked; kept as an issue-less slice so totals still add up
 # Calls on main or HEAD have no branch signal and fall through to the gh rule,
 # which also carries the last-seen issue forward after a branch is left.
-# Subagent calls join the slice of their own gitBranch, else of the spawning
-# session's whole-session issue, and are reported apart from the main calls.
+# Subagent calls join the issue of their own gitBranch, else the session's
+# largest work slice, and are reported apart from the main calls.
 import glob, json, os, re, sys
 from collections import defaultdict
 
@@ -77,16 +77,22 @@ def slices(path):
     dominant = max(work, key=lambda k: len(by[k]))[0] if work else None
     sub = defaultdict(lambda: {"calls": 0, "all_total": 0})
     for sf in glob.glob(os.path.join(os.path.dirname(path), sid, "subagents", "agent-*.jsonl")):
-        seen = {k: (u, m) for k, (u, m, _, _) in cut(sf)}
-        issues = {i for _, (_, _, i, s) in cut(sf) if s == "branch"}
+        cuts = cut(sf)
+        seen = {k: (u, m) for k, (u, m, _, _) in cuts}
+        issues = {i for _, (_, _, i, s) in cuts if s == "branch"}
         issue = issues.pop() if len(issues) == 1 else dominant
         t = usage_totals(seen)
         sub[issue]["calls"] += t["calls"]
         sub[issue]["all_total"] += t["all_total"]
+    # A subagent total goes on the first work row for its issue; if the main
+    # session never worked that issue, it gets a row of its own with no main calls.
+    for issue in sub:
+        if not any(k[0] == issue for k in work):
+            by[(issue, "subagent")] = {}
     rows = []
     for issue, source in sorted(by, key=lambda k: (k[0] is None, k[0] or 0, k[1])):
         t = usage_totals(by[(issue, source)])
-        s = sub.pop(issue, {"calls": 0, "all_total": 0}) if source != "none" or issue is None else {"calls": 0, "all_total": 0}
+        s = sub.pop(issue, {"calls": 0, "all_total": 0}) if source != "post-pr" else {"calls": 0, "all_total": 0}
         rows.append(dict(session_id=sid, project=os.path.basename(os.path.dirname(path)),
                          issue=issue, source=source, **t,
                          subagent_calls=s["calls"], subagent_all_total=s["all_total"]))
