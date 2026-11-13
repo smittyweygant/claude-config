@@ -14,7 +14,8 @@
 # (its calls row is not exactly "calls") is skipped.
 #
 # An entry may end with a line "log: project=<p> issue=<n> est_<field>=<lo-hi>
-# ... act_<field>=<n> ...". It replaces the entry's table, and its project and
+# ... act_<field>=<n> ...", at the start of the line and optionally in
+# backticks. It replaces the entry's table, and its project and
 # issue win over the heading's.
 #
 # An issue logged in several entries gets one row; lo, hi and actuals add up.
@@ -74,7 +75,7 @@ def entries(text):
             if cur and (cur[0], cur[1]) not in MANUAL:
                 out.append(cur)
             continue
-        if line.strip("` ").startswith("log:"):
+        if line.lstrip("`").startswith("log:"):
             kv = dict(p.split("=", 1) for p in line.strip("` ")[4:].split() if "=" in p)
             e = {f: estimate(kv[f"est_{f}"]) for f in FIELDS if f"est_{f}" in kv}
             a = {f: actual(kv[f"act_{f}"]) for f in FIELDS if f"act_{f}" in kv}
