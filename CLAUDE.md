@@ -84,7 +84,10 @@ Applies to every issue or task, in any project.
   all_total, fresh, output, and one line on why they differed.
 - **Log it.** Add a dated entry to the vault note
   `Projects/Coding Agent Orchestration/Agent Work Estimation.md`. It is the one note
-  outside the quick-capture rule that Claude writes to from any project.
+  outside the quick-capture rule that Claude writes to from any project. End the
+  entry with one line that `scripts/estimates.py` reads. Ranges as `lo-hi`;
+  actuals include subagents:
+  `log: project=<repo> issue=<N> est_calls=<n> est_all_total=<n> est_fresh=<n> est_output=<n> act_calls=<n> act_all_total=<n> act_fresh=<n> act_output=<n>`
 - Do not skip the up-front estimate because the task looks small.
 
 ## Grep First — Never Read Large Files Whole

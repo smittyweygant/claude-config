@@ -13,6 +13,11 @@
 # by hand from the note. A table that is a summary over several issues
 # (its calls row is not exactly "calls") is skipped.
 #
+# An entry may end with a line "log: project=<p> issue=<n> est_<field>=<lo-hi>
+# ... act_<field>=<n> ...", at the start of the line and optionally in
+# backticks. It replaces the entry's table, and its project and
+# issue win over the heading's.
+#
 # An issue logged in several entries gets one row; lo, hi and actuals add up.
 # Every issue that has a slice also gets a row, with blank estimate fields when
 # the note has no entry. Issue-less slices are left out.
@@ -70,7 +75,16 @@ def entries(text):
             if cur and (cur[0], cur[1]) not in MANUAL:
                 out.append(cur)
             continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if line.lstrip("`").startswith("log:"):
+            kv = dict(p.split("=", 1) for p in line.strip("` ")[4:].split() if "=" in p)
+            e = {f: estimate(kv[f"est_{f}"]) for f in FIELDS if f"est_{f}" in kv}
+            a = {f: actual(kv[f"act_{f}"]) for f in FIELDS if f"act_{f}" in kv}
+            if cur is None:
+                cur = [None, None, {}, {}]
+                out.append(cur)
+            cur[:] = [kv["project"], int(kv["issue"]), e, a]
+            continue
+        cells =[c.strip() for c in line.strip().strip("|").split("|")]
         if cur and line.startswith("|") and len(cells) == 3 and cells[0].lower() in FIELDS:
             e, a = estimate(cells[1]), actual(cells[2])
             if e:
