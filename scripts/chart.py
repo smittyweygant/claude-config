@@ -46,7 +46,7 @@ def estimate_chart(issues):
         return left + (math.log10(v) - l0) / (l1 - l0) * (width - left - right)
 
     out = [f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="Estimate range and actual all_total per issue">']
-    tick = 10 ** math.ceil(l0)
+    tick = 10 ** math.floor(l0)
     while tick <= hi_v:
         for m in (1, 2, 5):
             v = tick * m
