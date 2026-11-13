@@ -74,8 +74,8 @@ def entries(text):
             if cur and (cur[0], cur[1]) not in MANUAL:
                 out.append(cur)
             continue
-        if line.startswith("log:"):
-            kv = dict(p.split("=", 1) for p in line[4:].split() if "=" in p)
+        if line.strip("` ").startswith("log:"):
+            kv = dict(p.split("=", 1) for p in line.strip("` ")[4:].split() if "=" in p)
             e = {f: estimate(kv[f"est_{f}"]) for f in FIELDS if f"est_{f}" in kv}
             a = {f: actual(kv[f"act_{f}"]) for f in FIELDS if f"act_{f}" in kv}
             if cur is None:
