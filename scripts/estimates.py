@@ -104,7 +104,8 @@ def main():
     rows = {}
     def row(project, issue):
         return rows.setdefault((project, issue), dict(
-            project=project, issue=issue, entries=0, slice_calls=0, slice_all_total=0, slice_sessions=set()))
+            project=project, issue=issue, entries=0, slice_calls=0, slice_all_total=0,
+            post_pr_calls=0, post_pr_all_total=0, slice_sessions=set()))
 
     logged = entries(open(note).read()) + [(p, i, e, a) for (p, i), (e, a) in MANUAL.items()]
     for p, i, e, a in logged:
@@ -123,8 +124,11 @@ def main():
         if s["issue"] is None or proj is None:
             continue
         r = row(proj, s["issue"])
-        r["slice_calls"] += s["calls"] + s["subagent_calls"]
-        r["slice_all_total"] += s["all_total"] + s["subagent_all_total"]
+        # The vault actual is measured when the PR opens, so the slice that
+        # matches it stops there. Calls after the PR are kept apart.
+        kind = "post_pr" if s["source"] == "post-pr" else "slice"
+        r[f"{kind}_calls"] += s["calls"] + s["subagent_calls"]
+        r[f"{kind}_all_total"] += s["all_total"] + s["subagent_all_total"]
         r["slice_sessions"].add(s["session_id"][:8])
 
     with open(out, "w") as f:
