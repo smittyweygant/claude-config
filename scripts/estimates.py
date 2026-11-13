@@ -20,7 +20,7 @@ import json, os, re, sys
 from collections import defaultdict
 
 FIELDS = ("calls", "all_total", "fresh", "output")
-ENTRY = re.compile(r"^### (\d{4}-\d\d-\d\d)\s*[:—-]\s*(finances|claude-config) #(\d+)")
+ENTRY = re.compile(r"^### \d{4}-\d\d-\d\d\s*[:—-]\s*(finances|claude-config) #(\d+)")
 NUM = re.compile(r"(\d+(?:\.\d+)?)\s*([kM]?)")
 REVIEW = re.compile(r"\(\+\s*~?(\d+(?:\.\d+)?)\s*([kM])\s*review")
 SCALE = {"": 1, "k": 1e3, "M": 1e6}
@@ -53,7 +53,7 @@ def estimate(cell):
 
 
 def actual(cell):
-    f = figures(cell)
+    f = figures(cell.split("(")[0])
     if not f:
         return None
     r = REVIEW.search(cell)
@@ -61,12 +61,12 @@ def actual(cell):
 
 
 def entries(text):
-    # [(project, issue, date, estimate, actual)] from the note, in file order.
+    # [(project, issue, estimate, actual)] from the note, in file order.
     out, cur = [], None
     for line in text.splitlines():
         if line.startswith("#"):
             m = ENTRY.match(line)
-            cur = [m.group(2), int(m.group(3)), m.group(1), {}, {}] if m else None
+            cur = [m.group(1), int(m.group(2)), {}, {}] if m else None
             if cur and (cur[0], cur[1]) not in MANUAL:
                 out.append(cur)
             continue
@@ -74,10 +74,10 @@ def entries(text):
         if cur and line.startswith("|") and len(cells) == 3 and cells[0].lower() in FIELDS:
             e, a = estimate(cells[1]), actual(cells[2])
             if e:
-                cur[3][cells[0].lower()] = e
+                cur[2][cells[0].lower()] = e
             if a is not None:
-                cur[4][cells[0].lower()] = a
-    return [e for e in out if e[3] and e[4].get("all_total")]
+                cur[3][cells[0].lower()] = a
+    return [e for e in out if e[2] and e[3].get("all_total")]
 
 
 def main():
@@ -92,8 +92,8 @@ def main():
         return rows.setdefault((project, issue), dict(
             project=project, issue=issue, entries=0, slice_calls=0, slice_all_total=0, slice_sessions=set()))
 
-    logged = entries(open(note).read()) + [(p, i, None, e, a) for (p, i), (e, a) in MANUAL.items()]
-    for p, i, _, e, a in logged:
+    logged = entries(open(note).read()) + [(p, i, e, a) for (p, i), (e, a) in MANUAL.items()]
+    for p, i, e, a in logged:
         r = row(p, i)
         r["entries"] += 1
         for f in FIELDS:
