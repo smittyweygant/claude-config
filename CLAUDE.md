@@ -153,6 +153,9 @@ Two profiles exist for Claude on the `claude` SSO session.
 - Use `claude-elevated` (role `ClaudeElevated`) for any write and for SSM
   operations (`aws ssm send-command` and the like). Use it too when `claude-dev`
   is denied. Say so when you switch. Smitty activates it per session.
+- Hold to least privilege. Use the lowest profile that does the job. Use
+  `claude-elevated` for the one operation that needs it, then go back to
+  `claude-dev`. Keep commands read-only unless a write is the task.
 - Never use the `admin`, `readonly`, or `default` profiles.
 - Pass the profile on every call (`--profile <p>`). Do not rely on `AWS_PROFILE`.
 - Confirm with `aws sts get-caller-identity --profile <p>` before relying on one.
