@@ -24,4 +24,9 @@ for u in seen.values():
     t["output"] += u.get("output_tokens", 0)
 t["fresh_total"] = t["input"] + t["cache_write"] + t["output"]
 t["all_total"] = t["fresh_total"] + t["cache_read"]
+# cost is in input-token equivalents: what the same spend would buy as plain
+# input. Weights are multiples of the base input price: cache reads 0.1x,
+# 1-hour cache writes 2x (5-minute writes are 1.25x), output 5x. Check them
+# against the current pricing page; they differ by model and cache TTL.
+t["cost"] = round(t["input"] + 2 * t["cache_write"] + 0.1 * t["cache_read"] + 5 * t["output"])
 print(json.dumps(t))
