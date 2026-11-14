@@ -150,8 +150,9 @@ it belongs in the gitignored `.local` files the repo's `CLAUDE.md` names.
 ## AWS Access
 Two profiles exist for Claude on the `claude` SSO session.
 - Default to `claude-dev` (role `ClaudeDev`).
-- Use `claude-elevated` (role `ClaudeElevated`) only when `claude-dev` is denied
-  or the work needs it. Say so when you switch. Smitty activates it per session.
+- Use `claude-elevated` (role `ClaudeElevated`) for any write and for SSM
+  operations (`aws ssm send-command` and the like). Use it too when `claude-dev`
+  is denied. Say so when you switch. Smitty activates it per session.
 - Never use the `admin`, `readonly`, or `default` profiles.
 - Pass the profile on every call (`--profile <p>`). Do not rely on `AWS_PROFILE`.
 - Confirm with `aws sts get-caller-identity --profile <p>` before relying on one.

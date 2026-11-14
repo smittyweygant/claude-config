@@ -4,7 +4,7 @@ How Claude runs a read-only SQL query against a Postgres container on an EC2 hos
 
 ## Profile
 
-Start with `claude-dev`. `ssm:SendCommand` is denied there, so this usually needs `claude-elevated`. Say so when you switch. See "AWS Access" in `CLAUDE.md`.
+Use `claude-elevated`. SSM operations go there, and `claude-dev` is denied `ssm:SendCommand`. Say so when you switch. See "AWS Access" in `CLAUDE.md`.
 
 ## Steps
 
