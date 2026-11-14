@@ -156,6 +156,8 @@ Two profiles exist for Claude on the `claude` SSO session.
 - Pass the profile on every call (`--profile <p>`). Do not rely on `AWS_PROFILE`.
 - Confirm with `aws sts get-caller-identity --profile <p>` before relying on one.
 - Production writes follow the data rule above: dump, dry run, Smitty's go-ahead.
+- For a read-only database query over SSM, see `docs/aws-ssm-read-query.md`
+  in claude-config.
 
 ## Subagents
 - Use the Explore subagent for open-ended codebase questions.
