@@ -147,6 +147,16 @@ Edit the source, not the live file, and check `chezmoi diff` before and after.
 Keep personal data (hosts, key names, IPs, account IDs) out of public repos;
 it belongs in the gitignored `.local` files the repo's `CLAUDE.md` names.
 
+## AWS Access
+Two profiles exist for Claude on the `claude` SSO session.
+- Default to `claude-dev` (role `ClaudeDev`).
+- Use `claude-elevated` (role `ClaudeElevated`) only when `claude-dev` is denied
+  or the work needs it. Say so when you switch. Smitty activates it per session.
+- Never use the `admin`, `readonly`, or `default` profiles.
+- Pass the profile on every call (`--profile <p>`). Do not rely on `AWS_PROFILE`.
+- Confirm with `aws sts get-caller-identity --profile <p>` before relying on one.
+- Production writes follow the data rule above: dump, dry run, Smitty's go-ahead.
+
 ## Subagents
 - Use the Explore subagent for open-ended codebase questions.
 - Use parallel Agent tool calls for independent research tasks.
