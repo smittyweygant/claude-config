@@ -1,6 +1,6 @@
 ---
 name: akka-presentation
-description: Standard method for building any presentation, deck, briefing, customer session or talk. Use when asked to design, build, restyle or review slides, a deck, a talk or a demo walkthrough. Sets the order of work (sources, storyboard, build, look at every frame), the language rules, the document set that travels with a deck, and the Akka visual defaults. Adapted from Tyler Jewell's akka-presentation skill.
+description: Standard method for building any presentation, deck, briefing, customer session or talk. Use when asked to design, build, restyle or review slides, a deck, a talk, a demo walkthrough or a narrated film. Sets the order of work (sources, storyboard, build, look at every frame), the language rules, the document set that travels with a deck, and the Akka visual defaults. Adapted from Tyler Jewell's akka-presentation skill.
 ---
 
 # Presentation standard
@@ -59,6 +59,10 @@ These are defaults. A customer's template wins.
 - Few, large elements per frame. The subject of the current sentence stands out. The rest steps back.
 - Sizes on 1920×1080 with 150 px gutters: headlines 64–84 px, body 26–36 px, labels 20–26 px.
   Nothing overlaps. Nothing runs off the stage.
+- **Show the real product.** Animated diagrams alone are not enough. The console and its generated
+  artifacts (the Story, the component reference, architecture and sequence diagrams, Design and
+  Changes, exit conditions, evidence) are strong visuals. Capture them at high resolution and place
+  them throughout. Pan, zoom and highlight the part being spoken about.
 
 ## 6. Language
 
@@ -71,6 +75,10 @@ These are defaults. A customer's template wins.
 - A customer-facing opening is personal: greet the named people, say what we appreciate, then give the overview.
 - Match the audience's spelling (Canadian or British: cheque, centre).
 - Never write "event store" or "design target".
+- Never imply every Akka system has the same design ("a standard architecture"). Each system is
+  its own design, composed from Akka's components.
+- The innovation engine speeds up any idea: an AI system or any IT system. Modernizing existing
+  systems is one use of it, not the whole story.
 
 ## 7. Look at every frame
 
@@ -78,7 +86,19 @@ Render every slide to an image or PDF and look at it. Check for overlaps, text u
 cards on titles, anything clipped. Fix and re-render until each frame is clean.
 Never hand over a frame you have not seen.
 
-## 8. Corrections become rules
+## 8. Narrated film
+
+Akka's film engine, runbook and sound rules live in `website/demo/` of the presentations repo;
+`website/demo/README.md` holds the steps. Follow it rather than restating it here.
+
+- Write narration for the ear, one line per beat. The lines set the timing.
+- A spoken list of three or more items takes a comma before the last item ("a flow sequence,
+  and an API reference"). Without it the voice runs the last two together.
+- Check before handing over: the length; no dark run over 1.2 s outside cards (`blackdetect`);
+  integrated loudness −16 to −17.5 LUFS; no gap between lines over 4.5 s; a contact sheet of
+  frames across the film. Watch the finished MP4 end to end.
+
+## 9. Corrections become rules
 
 When Smitty corrects something, fix it everywhere it applies. Then add the rule to this file,
 or to the deck's `README.md` if it holds for that deck only.
