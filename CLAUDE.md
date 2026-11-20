@@ -252,6 +252,13 @@ it at user scope on the work profile if the `claude` CLI is on PATH.
 Authentication is per-machine and interactive: run `/mcp` and sign in through
 Okta after installing.
 
+### Kalix Wiki
+
+The internal wiki at `https://wiki.kalix.dev/docs` documents how Akka's cloud
+platform is built and run. It is private GitHub Pages, so fetching the URL
+fails. Use the `kalix-wiki` skill, which reads a local clone of
+`lightbend/kalix-wiki` at `~/akka/kalix-wiki`.
+
 ### Future
 
 - `robert-mcp` (Robert Walker's MCP — git/go/cargo/mvn/sbt/gh/docker/buf/jq/akka

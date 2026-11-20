@@ -13,5 +13,9 @@ Slash-command skills, installed to `$CLAUDE_CONFIG_DIR/skills/`.
   building any deck or talk. Adapted from Tyler Jewell's skill. Ships a
   `skeleton/` of companion docs. Design: `docs/presentation-skill-plan.md`.
 
+- `kalix-wiki` — answers questions about Akka's cloud platform from a local
+  clone of the internal wiki (`lightbend/kalix-wiki`, served at
+  wiki.kalix.dev). Holds only the clone path; no wiki content lives here.
+
 Add more `<skill-name>/SKILL.md` directories here as reusable workflows
 emerge.
