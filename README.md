@@ -13,7 +13,7 @@ personal instructions, hooks, and skills that apply across machines.
 | `skills/` | `$CLAUDE_SHARED_DIR/skills/` | Slash-command skills — `akka-pr-review` (independent pre-push review, self-gates on akka-org remote), `hemingway` (spare-prose rewrite on demand) |
 | `templates/` | copy into a project root as needed | Per-project scaffolding. `project-workflow/` holds the issue forms, PR template, labels script, workflow doc and project `CLAUDE.md` that go with the shared "Project Workflow" rules |
 | `codex/` | `~/.codex` and project roots | Portable Codex config — not yet built |
-| `akka-mcp-gateway` (registered by `install.sh`, work profile only) | user-scope MCP registration in `$CLAUDE_CONFIG_DIR/.claude.json`, per profile | Company gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Calendar, Drive, HubSpot, Okta, Groundcover. Auth is per-machine: run `/mcp` and sign in via Okta. |
+| `akka-mcp-gateway` (registered by `install.sh`, work profile only) | user-scope MCP registration in `$CLAUDE_CONFIG_DIR/.claude.json`, per profile | Company gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Calendar, Drive, Salesforce, HubSpot, Okta, Groundcover. `CLAUDE.md` says which tools reach the work accounts. Auth is per-machine: run `/mcp` and sign in via Okta. |
 
 One repo, two profile directories — `~/.claude-personal` and `~/.claude-work`
 — but a single shared config/history tree at `~/.claude-shared` (default;
