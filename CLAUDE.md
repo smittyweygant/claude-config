@@ -246,11 +246,40 @@ commits, or switches branches. This is enforced, not just advisory — see
 
 ### Akka MCP Gateway
 
-Company MCP gateway at `https://mcp.akka.services/mcp` — Slack, Gmail, Google
-Calendar, Google Drive, HubSpot, Okta, and Groundcover. `install.sh` registers
-it at user scope on the work profile if the `claude` CLI is on PATH.
-Authentication is per-machine and interactive: run `/mcp` and sign in through
-Okta after installing.
+Company MCP gateway at `https://mcp.akka.services/mcp`, registered as the
+`akka-mcp-gateway` MCP server. It carries Slack, Gmail, Google Calendar, Google
+Drive, Salesforce, HubSpot, Okta, and Groundcover. `install.sh` registers it at
+user scope on the work profile if the `claude` CLI is on PATH. Authentication is
+per-machine and interactive: run `/mcp` and sign in through Okta after
+installing.
+
+Smitty's work accounts are reached only through this gateway. For any task that
+touches Akka email, calendar, Slack, Salesforce, or Google Drive, use these
+tools, all under the `mcp__akka-mcp-gateway__` prefix:
+
+| Source | Tools |
+|---|---|
+| Work email (Gmail) | `Workspace_Gmail_*` |
+| Work calendar | `Workspace_GoogleCalendar_*` |
+| Work Drive, Docs, Sheets | `Workspace_GoogleDrive_*`, `Workspace_GoogleDocs_*`, `Workspace_GoogleSheets_*` |
+| Slack | `slack_*` |
+| Salesforce records | `Salesforce_*` |
+| Salesforce files and agreements | `AkkaSalesforce_*` |
+
+The `Workspace_` tools come from the gateway's Google Workspace connector,
+which is the one signed in to the Akka Google account. The gateway also lists
+`Gmail_*`, `GoogleCalendar_*`, and `GoogleDrive_*` without the prefix. Those
+belong to a separate connector that is not signed in; skip them.
+
+The claude.ai connectors (`mcp__claude_ai_Gmail__*`,
+`mcp__claude_ai_Google_Calendar__*`, `mcp__claude_ai_Google_Drive__*`) are
+Smitty's personal accounts. Never use them for work, and never use the gateway
+for personal mail or calendar.
+
+The gateway tools are deferred. Load the ones a task needs in one `ToolSearch`
+call with a `select:` list. If the gateway's tools are missing from the deferred
+list, it is not connected in this session: say so and point to `/mcp` and the
+Okta sign-in. Do not fall back to the personal connectors.
 
 ### Kalix Wiki
 
